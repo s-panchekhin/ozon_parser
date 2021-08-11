@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from time import sleep
 import os
+import traceback
 
 # В переменную URL Вписать ссылку в кавычках
 URL = "https://www.ozon.ru/category/apparatnaya-kosmetologiya-6325/?text=мезороллер"
@@ -36,6 +37,7 @@ class Parse:
 				raise "Впишите название продавца в переменную SELLER"
 		else:
 			raise "Парсер предназначан только для ozon.ru"
+		self.result = []
 		
 
 	def open_url(self, page = 1):
@@ -47,6 +49,9 @@ class Parse:
 		self.driver.get(URL)
 		for i in range(self.SLEEP_TIME):
 			os.system('cls')
+			if self.result:
+				for j in self.result:
+					print(f"Страница: {j['page']} | URL: {j['url']}")
 			print(f"Open Page {page}", '.' * i)
 			sleep(1)
 		return {"source": self.driver.page_source, 'url': URL, 'page': page}
@@ -54,7 +59,6 @@ class Parse:
 	def parse(self,):
 		page = START_PAGE - 1
 		need_find = True
-		result = []
 		have_error = False
 		while need_find:
 			page += 1
@@ -65,24 +69,32 @@ class Parse:
 			if items != []:
 				for item in items:
 					try:
-						text = item.find('span', class_="j4 as3 ay9 a0f6 f-tsBodyM d8e5").get_text(strip=True)
-						if self.SELLER in text.lower():
-							result.append(
-								{'url': html['url'], 'page': html['page']}
-								)
+						class_ = "j4 as3 ay9 a0f6 f-tsBodyM d8e5"
+						block = item.find('span', class_=class_)
+						if block is not None:
+							text = block.get_text(strip=True)
+							if self.SELLER in text.lower():
+								self.result.append(
+									{'url': html['url'], 'page': html['page']}
+									)
+								print(self.result)
+						else:
+							print("block NONE:", block)
 					except:
 						os.system('cls')
 						need_find = False
 						have_error = True
+						print(traceback.format_exc())
 			else:
 				need_find = False
-		if result:
-			for i in result:
+		if self.result:
+			for i in self.result:
 				print(f"Страница: {i['page']} | URL: {i['url']}")
 		else:
 			print("*" * 50)
 			print("Совпадений не найдено. Попробуйте увеличить значение SLEEP_TIME через несколько минут.")
 			print("!" * 50)
+			print(traceback.format_exc())
 		if have_error:
 			print("*" * 50)
 			print(f"Возникла ошибка. Обработано {page - 1} Страниц\n\nЗапустите скрипт с этой страницы через несколько минут")
