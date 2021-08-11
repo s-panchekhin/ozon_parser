@@ -51,7 +51,7 @@ class Parse:
 			os.system('cls')
 			if self.result:
 				for j in self.result:
-					print(f"Страница: {j['page']} | URL: {j['url']}")
+					print(f"Обнаружено совпадение. Страница: {j['page']}")
 			print(f"Open Page {page}", '.' * i)
 			sleep(1)
 		return {"source": self.driver.page_source, 'url': URL, 'page': page}
