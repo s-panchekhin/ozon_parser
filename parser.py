@@ -5,12 +5,11 @@ import os
 import traceback
 
 # В переменную URL Вписать ссылку в кавычках
-#URL = "https://www.ozon.ru/category/apparatnaya-kosmetologiya-6325/?text=мезороллер"
-URL = "https://www.wildberries.ru/catalog/0/search.aspx?xfilters=xsubject%3Bdlvr%3Bbrand%3Bprice%3Bkind%3Bcolor%3Bwbsize%3Bseason%3Bconsists&xparams=subject%3D1560&xshard=beauty&sort=popular&search=мезороллер"
+URL = "https://www.ozon.ru/category/apparatnaya-kosmetologiya-6325/?from_global=true&text=мезороллер"
 
 # в переменную SELLER вписать название продавца в кавычках, если нужно другое!
 # Если я правильно понял, то для WB нужно писать "ИП Майорова Алина Андреевна"
-SELLER = "ИНТЕРНЕТ РЕВОЛЮЦИЯ ООО"
+SELLER = "Майоран"
 
 # Время загрузки страницы. Можно увеличить, если будут ошибки, уменьшать НЕ РЕКОМЕНДУЕТСЯ!
 SLEEP_TIME = 5
@@ -53,9 +52,11 @@ class Parse:
 	def open_page(self, page=1):
 		if not 'page' in self.URL:
 			if self.platform == 'ozon':
-				URL = self.URL.replace("?", f"?page={page}&")
+				URL = self.URL.replace("&text", f"&page={page}&text")
 			else:
 				URL = self.URL.replace("&search", f"&page={page}&search")
+			print(URL)
+			sleep(3)
 			self.driver.get(URL)
 			for i in range(self.SLEEP_TIME):
 				os.system('cls')
@@ -100,15 +101,15 @@ class Parse:
 		while need_find:
 			page += 1
 			html = self.open_page(page)
-			soup = BeautifulSoup(html['source'])
+			soup = BeautifulSoup(html['source'], 'lxml')
 			if self.platform == 'ozon':
 				
-				items = soup.findAll('div', class_='a0c6')
+				items = soup.findAll('div', class_='e3f7')
 				
 				if items != []:
 					for item in items:
 						try:
-							class_ = "j4 as3 ay9 a0f6 f-tsBodyM d8e5"
+							class_ = "j4 as3 ay9 a0f6 f-tsBodyM e3u6"
 							block = item.find('span', class_=class_)
 							if block is not None:
 								text = block.get_text(strip=True)
