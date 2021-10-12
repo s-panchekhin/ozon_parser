@@ -104,12 +104,12 @@ class Parse:
 			soup = BeautifulSoup(html['source'], 'lxml')
 			if self.platform == 'ozon':
 				
-				items = soup.findAll('div', class_='e3f7')
+				items = soup.findAll('div', class_='b0d1 b0d6')
 				
 				if items != []:
 					for item in items:
 						try:
-							class_ = "j4 as3 ay9 a0f6 f-tsBodyM e3u6"
+							class_ = "a7y a8a2 a8a5 a8b6 f-tsBodyM b0d3"
 							block = item.find('span', class_=class_)
 							if block is not None:
 								text = block.get_text(strip=True)
